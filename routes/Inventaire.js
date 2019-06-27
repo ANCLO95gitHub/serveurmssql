@@ -326,6 +326,7 @@ async function updateSelecteurInventaire_async(  IDID, laLongueur, Quantity, res
     //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
     let retData = { "status": true }; //, "valDeRetour": result.recordset
     //response.JSON(retData);
+    sql.close();
   } catch (err) {
     console.log("section catch  du updateKarted_async")
     console.log(err)
