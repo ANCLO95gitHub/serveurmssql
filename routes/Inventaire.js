@@ -434,3 +434,44 @@ exports.pipeMsSQLtoMongo = function (reques, result, next) {
 asdf
 
  */
+async function pipeMsSQLtoMongo_async(IDID){
+  try{
+    console.log('DEUBTasync function pipeMsSQLtoMongo_async() ');
+    // make sure that any items are correctly URL encoded in the connection string
+    //let theConnect = 'mssql://andrec:Bonjour1@srv-lrobo-sql-cloud.database.windows.net/LR_INV_CLOUD;encrypt=true'
+    let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
+    await sql.connect(config)
+    ///ac: reviser le ID entre ticks
+    ///const result = await sql.query`select DISTINCT * from SelecteurInventaire where ID <= ${id} AND DiminutifForme <> 'PL' `
+    //const result = await sql.query`select DISTINCT * from SelecteurInventaire where DiminutifMB = ${MB} AND DiminutifForme = ${Forme}  `
+    const result = await sql.query`select ID,
+            InPurcId_ExPurcId,
+            ExPurcId,
+            NomMB,
+            DiminutifMB,
+            NomForme,
+            DiminutifForme,
+            ThickDiam,
+            OptionX,
+            OptionY,
+            case when Modifier = 1 then OptionZ_modif when Morceler = 1 then OptionZ_modif else OptionZ  end as OptionZ,
+            Grade,
+            DescriptionCourte,
+            DescriptionLongue,
+            Montant,
+            Modifier,
+            Consommer
+        from SelecteurInventaire where DiminutifMB = ${MB} AND DiminutifForme = ${Forme} AND Consommer = 0 AND Karted = 0 ORDER BY DescriptionCourte `
+
+    // console.log(result)
+    //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
+    let retData = { status: true, InvenDet: result.recordset  };
+    res.json(retData);
+    /*AC: faire ecriture en JSON ici */
+
+  } catch (err) {
+    console.log("section catch")
+    console.log(err)
+  }
+
+};
