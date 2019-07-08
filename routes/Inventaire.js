@@ -430,3 +430,7 @@ exports.pipeMsSQLtoMongo = function (reques, result, next) {
   console.log(' FIN pipeMsSQLtoMongo (); complete');
 }
 //Pour un testing checkout
+/*
+asdf
+
+ */
