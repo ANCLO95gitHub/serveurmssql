@@ -418,7 +418,9 @@ exports.logout = function(request, response, next){
 };
 
 /*****************************************************************************/
-//tring connectionUrl =  "jdbc:sqlserver://localhost:1433;databaseName=AdventureWorks;integratedSecurity=true;encrypt=true; trustServerCertificate=false;trustStore=storeName;trustStorePassword=storePassword";
+//string connectionUrl =  "jdbc:sqlserver://localhost:1433;databaseName=AdventureWorks;integratedSecurity=true;encrypt=true; trustServerCertificate=false;trustStore=storeName;trustStorePassword=storePassword";
+/*****************************************************************************/
+/*****************************************************************************/
 exports.pipeMsSQLtoMongo = function (reques, result, next) {
   req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
   console.log('DEBUT  exports.pipeMsSQLtoMongo = function (req, res, next) {   req.param(id) ' + req.param('id') );
@@ -427,3 +429,4 @@ exports.pipeMsSQLtoMongo = function (reques, result, next) {
   pipeMsSQLtoMongo_async(res, MB, Forme);
   console.log(' FIN pipeMsSQLtoMongo (); complete');
 }
+//Pour un testing checkout
