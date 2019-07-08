@@ -417,7 +417,6 @@ exports.logout = function(request, response, next){
     }*/
 };
 
-
 /*****************************************************************************/
 //tring connectionUrl =  "jdbc:sqlserver://localhost:1433;databaseName=AdventureWorks;integratedSecurity=true;encrypt=true; trustServerCertificate=false;trustStore=storeName;trustStorePassword=storePassword";
 exports.pipeMsSQLtoMongo = function (reques, result, next) {
