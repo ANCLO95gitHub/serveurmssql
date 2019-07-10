@@ -33,6 +33,8 @@ app.get('/getinventaire/:id', inventaire.getInventaire);
 app.post('/postkart', inventaire.postKart);
 app.get('/getkart', inventaire.getKart);
 app.post('/deletekart', inventaire.deleteKart)
+app.post('/pipeMsSQLtoMongo', inventaire.pipeMsSQLtoMongo)
+
 
 app.get('/getPoidsMetaux', inventaire.getPoidsMetaux);
 app.get('/getWhoAmI', inventaire.getWhoAmI);

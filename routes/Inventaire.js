@@ -421,12 +421,13 @@ exports.logout = function(request, response, next){
 //string connectionUrl =  "jdbc:sqlserver://localhost:1433;databaseName=AdventureWorks;integratedSecurity=true;encrypt=true; trustServerCertificate=false;trustStore=storeName;trustStorePassword=storePassword";
 /*****************************************************************************/
 /*****************************************************************************/
-exports.pipeMsSQLtoMongo = function (reques, result, next) {
-  req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
-  console.log('DEBUT  exports.pipeMsSQLtoMongo = function (req, res, next) {   req.param(id) ' + req.param('id') );
-  res.header("content-type: application/json");
-  let id = req.param('id').toString();
-  pipeMsSQLtoMongo_async(res, MB, Forme);
+exports.pipeMsSQLtoMongo = function (request, result, next) {
+  request.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
+  console.log('DEBUT  exports.pipeMsSQLtoMongo = function (req, res, next) {   req.param(id) ' + request.param('id') );
+  result.header("content-type: application/json");
+  let id = request.param('IDID').toString();
+  sql.close();
+  pipeMsSQLtoMongo_async();
   console.log(' FIN pipeMsSQLtoMongo (); complete');
 }
 //Pour un testing checkout
@@ -434,7 +435,7 @@ exports.pipeMsSQLtoMongo = function (reques, result, next) {
 asdf
 
  */
-async function pipeMsSQLtoMongo_async(IDID){
+async function pipeMsSQLtoMongo_async(){
   try{
     console.log('DEUBTasync function pipeMsSQLtoMongo_async() ');
     // make sure that any items are correctly URL encoded in the connection string
@@ -445,30 +446,37 @@ async function pipeMsSQLtoMongo_async(IDID){
     ///const result = await sql.query`select DISTINCT * from SelecteurInventaire where ID <= ${id} AND DiminutifForme <> 'PL' `
     //const result = await sql.query`select DISTINCT * from SelecteurInventaire where DiminutifMB = ${MB} AND DiminutifForme = ${Forme}  `
     const result = await sql.query`select ID,
-            InPurcId_ExPurcId,
-            ExPurcId,
-            NomMB,
-            DiminutifMB,
-            NomForme,
-            DiminutifForme,
-            ThickDiam,
-            OptionX,
-            OptionY,
-            case when Modifier = 1 then OptionZ_modif when Morceler = 1 then OptionZ_modif else OptionZ  end as OptionZ,
-            Grade,
-            DescriptionCourte,
-            DescriptionLongue,
-            Montant,
-            Modifier,
-            Consommer
-        from SelecteurInventaire where DiminutifMB = ${MB} AND DiminutifForme = ${Forme} AND Consommer = 0 AND Karted = 0 ORDER BY DescriptionCourte `
+             InPurcId_ExPurcId,
+             ExPurcId,
+           NomMB,
+           DiminutifMB,
+           NomForme,
+           DiminutifForme,
+             ThickDiam,
+             OptionX,
+             OptionY,
+             case when Modifier = 1 then OptionZ_modif when Morceler = 1 then OptionZ_modif else OptionZ  end as OptionZ,
+             Grade,
+           DescriptionCourte,
+           DescriptionLongue,
+           Montant,
+             Modifier,
+             Consommer
+        from SelecteurInventaire ORDER BY DescriptionCourte `
 
     // console.log(result)
     //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
     let retData = { status: true, InvenDet: result.recordset  };
-    res.json(retData);
+   // res.json(retData);
     /*AC: faire ecriture en JSON ici */
 
+    for( let unRecord in result.recordset){
+      console.log('Boucler ');
+      console.log(unRecord);
+      //console.log(result.recordset[unRecord]);
+      console.log(result.recordset[unRecord].NomMB);
+    }
+    sql.close();
   } catch (err) {
     console.log("section catch")
     console.log(err)
