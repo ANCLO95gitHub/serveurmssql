@@ -2,6 +2,11 @@
 let sql = require('mssql');
 const Connection = require('tedious').Connection;  // ac: de Quick.js
 const Request = require('tedious').Request;
+const fs = require('fs');
+let aSession = []
+let aSessionID = 'sid123'
+let aInc = 1;
+let sess = 'v';
 // const TYPES = require('tedious').TYPES;
 
 /// ac: de Quici.js
@@ -27,8 +32,15 @@ const config = {
 
 // AC: ICI     /*****************************************************************************/
 exports.getHome = function(request, response, next){
-    console.log( "DEBUT          GET request to the homepage" );
-    res.send('GET request to the homepage');
+  console.log( "DEBUT          GET request to the homepage" );
+  sess = JSON.stringify(request.session);
+  console.log('sess=' + sess );
+  request.session.user = 'edivasfdasdfqwf234t23g24g2g245gh245g2g';
+  console.log('DEBUT  public/index.html   res.sendFile (serveurmssql)Salut le Monde, Hello World!, Hola el Mundo')
+  //res.sendFile(path.join(__dirname, 'public/index.html')); // views
+  //response.send('DEBUT  public/index.html   res.sendFile (serveurmssql)Salut le Monde, Hello World!, Hola el Mundo');
+
+  response.status(200).send('GET request to the homepage ::sess=' + sess);
 }
 exports.getWhoAmI = function(req, res){
   console.log( "DEBUT  export.getWhoAmI = function(req, res){" );
@@ -43,7 +55,7 @@ exports.getWhoAmI = function(req, res){
 //  console.log( "JSON.stringifyreq.client=" + JSON.parse(req.client ) );
   let ii=0;
   for( let titi in req){
- //   console.log( "req.titi=" + titi);
+    //console.log( "req.titi=" + titi);
     ii++;
   }
   console.log( "ii=" + ii);
@@ -63,10 +75,17 @@ exports.getWhoAmI = function(req, res){
   console.log( "res._maxListeners=" + res._maxListeners);
 
   console.log( "res.sendDate=" + res.sendDate);
+  console.log( "req.user=" + req.user);
+  console.log( "res.user=" + res.user);
+  console.log( "res.session=" + res.session);
+  req.user = "abc123"
+  res.user = "abc123"
+  res.session = { session: "abc123" };
+  console.log( "res.session=" + JSON.stringify(res.session));
   //console.log( "res.status=" + res.status);
   console.log( "ii=" + ii);
 
-    let lareponse = { reponse: req.hostname };
+    let lareponse = { reponse: req.hostname, laSession: res.session};
     res.json(lareponse);
 
 };
@@ -80,7 +99,6 @@ exports.setWhoAmI = function(req, res){
   res.json(lareponse);
 
 }
-
 
 // let formData =[];
 let connection = new Connection(config);
@@ -218,9 +236,47 @@ async function getPoidsMetaux_async(res, MB, Forme)  {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 exports.getInventaire = function (req, res) {
   ///console.log('DEBUT  exports.getInventaire = function (req, res) {   req.params.id=' + req.query.id);
+  res.header("content-type: application/json");
   console.log('DEBUT  exports.getInventaire = function (req, res) {   req.param(id) ' + req.param('id') );
-    res.header("content-type: application/json");
+  console.log('exports.getInventaire      req.param(laSession) = ' +  req.param('laSession') );
+  //let ediv = req.param('laSession').toString();
+  let ediv = req.query.laSession;
+  console.log('ediv=' + ediv );
+  req.session.user = ediv;
+  if( ediv === 'ediv'){
+    ///create new session ID
+    if( aSession.length == 0 ){
+      aSession[0] = aSessionID;
+    }else{
+      //if( aSession.find( ediv ) ){      }
+
+    }
+
+    //return;
+  }
+  //console.log('---exports.getInventaire   req.params = ' + JSON.stringify( req.params) );
+
+  //console.log('req.query.id=' + req.query.id );
+  //console.log('req.query.laSession=' + req.query.laSession );
     let id = req.param('id').toString();
+    /*
+    let laSession = req.param('laSession').toString();
+    console.log('exports.getInventaire    let laSession = ' + laSession );
+    */
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+    let ii=0;
+    for( let titi in req){
+    //  console.log( "req.titi=" + titi);
+      ii++;
+    }
+  console.log('req.titi=sessionCookies=' + req.query.sessionCookies );
+  console.log('req.titi=sessionOptions=' + req.query.sessionOptions );
+  console.log('req.titi=sessionKey=' + req.query.sessionKey );
+  console.log('req.titi=session=' + req.session );
+  console.log('req.titi=session. stringify=' + JSON.stringify( req.session ) );
+  console.log('req.titi=session.user=' + JSON.stringify( req.session.user ) );
+  console.log('req.titi=session.secret=' + JSON.stringify( req.session.secret ) );
+  console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS');
     //if( !( id >=0 )){
   //  id=3100;  // ac: reviser
   //}
@@ -462,20 +518,139 @@ async function pipeMsSQLtoMongo_async(){
            Montant,
              Modifier,
              Consommer
-        from SelecteurInventaire ORDER BY DescriptionCourte `
+        from SelecteurInventaire
+         WHERE ( DiminutifForme != 'PL' ) AND Consommer = 0 AND Karted = 0  
+        ORDER BY DescriptionCourte `
 
     // console.log(result)
     //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
     let retData = { status: true, InvenDet: result.recordset  };
    // res.json(retData);
     /*AC: faire ecriture en JSON ici */
-
+    let leFichier = `${__dirname}/testdata.json`;
+    console.log( __dirname );
+    console.log( __filename );
+    fs.writeFileSync(leFichier, `{ \n "products":[ \n`);
+    console.log('Boucler ');
+    console.log('Boucler   result.recordset.length=' + result.recordset.length );
     for( let unRecord in result.recordset){
-      console.log('Boucler ');
       console.log(unRecord);
       //console.log(result.recordset[unRecord]);
-      console.log(result.recordset[unRecord].NomMB);
+      //console.log(result.recordset[unRecord].NomMB);
+      fs.appendFileSync(leFichier, "{ \n" );
+      fs.appendFileSync(leFichier,`"productPermalink":  "${result.recordset[unRecord].DiminutifMB} ${result.recordset[unRecord].DiminutifForme}", \n` );
+      fs.appendFileSync(leFichier, `"productTitle":  "${result.recordset[unRecord].NomMB} ${result.recordset[unRecord].NomForme}", \n`);
+      fs.appendFileSync(leFichier, `"productPrice":  "${result.recordset[unRecord].Montant}", \n`);
+      fs.appendFileSync(leFichier, `"productDescription":  "<p style=\\"margin-bottom: 25px; text-rendering: optimizeLegibility;\\">  bla ble bli  DescriptionLongue .<\\/p><ul class=\\"tabs-content\\" style=\\"margin-right: 0px; margin-bottom: 25px; margin-left: 20px; padding: 0px; text-rendering: optimizeLegibility;\\"><li style=\\"margin-bottom: 0px;\\">  DescriptionCourte  .<\\/li><\\/ul>", \n`);
+      fs.appendFileSync(leFichier, `"productPublished":  "true", \n`);
+
+      fs.appendFileSync(leFichier, `"productTags":  "${result.recordset[unRecord].DiminutifMB}, ${result.recordset[unRecord].DiminutifForme}, ${result.recordset[unRecord].NomMB}, ${result.recordset[unRecord].NomForme}, ${result.recordset[unRecord].DescriptionCourte}, ${result.recordset[unRecord].DescriptionLongue}", \n`);
+      fs.appendFileSync(leFichier, `"productOptions": "{\\"Size\\":{\\"optName\\":\\"Size\\",\\"optLabel\\":\\"Select size\\",\\"optType\\":\\"select\\",\\"optOptions\\":[\\"S\\",\\"M\\",\\"L\\",\\"XL\\"]},\\"Colour\\":{\\"optName\\":\\"Colour\\",\\"optLabel\\":\\"Select colour\\",\\"optType\\":\\"select\\",\\"optOptions\\":[\\"Harvest\\",\\"Navy\\"]}}", \n`);
+      fs.appendFileSync(leFichier, `"productImage":   "/uploads/Metaux/${result.recordset[unRecord].DiminutifMB}${result.recordset[unRecord].DiminutifForme}.jpg",\n`);
+      fs.appendFileSync(leFichier, `"productStock": 1 \n` );
+
+      ///ac: ici verifier si c est le dernier item pour ne pas ecrire virgule
+      if( unRecord < ( result.recordset.length - 1 )){
+        fs.appendFileSync(leFichier, "}, \n" );
+      }else{
+        fs.appendFileSync(leFichier, "} \n" );
+      }
+      ////if( unRecord > 10 ){        break;      }
     }
+    fs.appendFileSync(leFichier, `], \n`);
+    /*ac: partie de l origine */
+    fs.appendFileSync(leFichier, ` \n `);
+    fs.appendFileSync(leFichier, `     "customers": [ \n `);
+    fs.appendFileSync(leFichier, `         { \n `);
+    fs.appendFileSync(leFichier, `             "email" : "test@test.com", \n `);
+    fs.appendFileSync(leFichier, `             "firstName" : "Testy", \n `);
+    fs.appendFileSync(leFichier, `             "lastName" : "Cles", \n `);
+    fs.appendFileSync(leFichier, `             "address1" : "1 test street", \n `);
+    fs.appendFileSync(leFichier, `             "address2" : "testvile", \n `);
+    fs.appendFileSync(leFichier, `             "country" : "Netherlands", \n `);
+    fs.appendFileSync(leFichier, `             "state" : "", \n `);
+    fs.appendFileSync(leFichier, `             "postcode" : "2000TW", \n `);
+    fs.appendFileSync(leFichier, `             "phone" : "123456789", \n `);
+    fs.appendFileSync(leFichier, `             "password" : "$2a$10$kKjnX1J/CAdgdmLI0WuPY.ILH1c7N8mD0H/ZyUXEfee1mJxJvZIS." \n `);
+    fs.appendFileSync(leFichier, `         } \n `);
+    fs.appendFileSync(leFichier, `     ], \n `);
+    fs.appendFileSync(leFichier, `     "users": [ \n `);
+    fs.appendFileSync(leFichier, `         { \n `);
+    fs.appendFileSync(leFichier, `             "usersName" : "test", \n `);
+    fs.appendFileSync(leFichier, `             "userEmail" : "test@test.com", \n `);
+    fs.appendFileSync(leFichier, `             "userPassword" : "$2a$10$7jQx/hQOWrRni531b/dHRuH8o1ZP8Yo8g..GpTOF4M7RrEH/pzTMy", \n `);
+    fs.appendFileSync(leFichier, `             "isAdmin" : true \n `);
+    fs.appendFileSync(leFichier, `         } \n `);
+    fs.appendFileSync(leFichier, `     ], \n `);
+    fs.appendFileSync(leFichier, `     "orders": [ \n `);
+    fs.appendFileSync(leFichier, `         { \n `);
+    fs.appendFileSync(leFichier, `             "orderPaymentId" : "ch_1ElPw5L7TBqK1az83hbmOFuJ", \n `);
+    fs.appendFileSync(leFichier, `             "orderPaymentGateway" : "Stripe", \n `);
+    fs.appendFileSync(leFichier, `             "orderPaymentMessage" : "Payment complete.", \n `);
+    fs.appendFileSync(leFichier, `             "orderTotal" : 310, \n `);
+    fs.appendFileSync(leFichier, `             "orderEmail" : "test@test.com", \n `);
+    fs.appendFileSync(leFichier, `             "orderFirstname" : "Testy", \n `);
+    fs.appendFileSync(leFichier, `             "orderLastname" : "Cles", \n `);
+    fs.appendFileSync(leFichier, `             "orderAddr1" : "1 test street", \n `);
+    fs.appendFileSync(leFichier, `             "orderAddr2" : "testvile", \n `);
+    fs.appendFileSync(leFichier, `             "orderCountry" : "Netherlands", \n `);
+    fs.appendFileSync(leFichier, `             "orderState" : "SA", \n `);
+    fs.appendFileSync(leFichier, `             "orderPostcode" : "2000TW", \n `);
+    fs.appendFileSync(leFichier, `             "orderPhoneNumber" : "123456789", \n `);
+    fs.appendFileSync(leFichier, `             "orderComment" : "", \n `);
+    fs.appendFileSync(leFichier, `             "orderStatus" : "Paid", \n `);
+    fs.appendFileSync(leFichier, `             "orderProducts" : [] \n `);
+    fs.appendFileSync(leFichier, `         }, \n `);
+    fs.appendFileSync(leFichier, `         { \n `);
+    fs.appendFileSync(leFichier, `             "orderPaymentId" : "ch_1ElPw5L7TBqK1az83hbmOFuJ", \n `);
+    fs.appendFileSync(leFichier, `             "orderPaymentGateway" : "Stripe", \n `);
+    fs.appendFileSync(leFichier, `             "orderPaymentMessage" : "Payment complete.", \n `);
+    fs.appendFileSync(leFichier, `             "orderTotal" : 310, \n `);
+    fs.appendFileSync(leFichier, `             "orderEmail" : "test@test.com", \n `);
+    fs.appendFileSync(leFichier, `             "orderFirstname" : "Testy", \n `);
+    fs.appendFileSync(leFichier, `             "orderLastname" : "Cles", \n `);
+    fs.appendFileSync(leFichier, `             "orderAddr1" : "1 test street", \n `);
+    fs.appendFileSync(leFichier, `             "orderAddr2" : "testvile", \n `);
+    fs.appendFileSync(leFichier, `             "orderCountry" : "Netherlands", \n `);
+    fs.appendFileSync(leFichier, `             "orderState" : "SA", \n `);
+    fs.appendFileSync(leFichier, `             "orderPostcode" : "2000TW", \n `);
+    fs.appendFileSync(leFichier, `             "orderPhoneNumber" : "123456789", \n `);
+    fs.appendFileSync(leFichier, `             "orderComment" : "", \n `);
+    fs.appendFileSync(leFichier, `             "orderStatus" : "Declined", \n `);
+    fs.appendFileSync(leFichier, `             "orderProducts" : [] \n `);
+    fs.appendFileSync(leFichier, `         } \n `);
+    fs.appendFileSync(leFichier, `     ], \n `);
+    fs.appendFileSync(leFichier, `     "menu": { \n `);
+    fs.appendFileSync(leFichier, `         "items": [ \n `);
+    fs.appendFileSync(leFichier, `             { \n `);
+    fs.appendFileSync(leFichier, `                 "title" : "Backpacks", \n `);
+    fs.appendFileSync(leFichier, `                 "link" : "/category/backpack", \n `);
+    fs.appendFileSync(leFichier, `                 "order" : 0 \n `);
+    fs.appendFileSync(leFichier, `             }, \n `);
+    fs.appendFileSync(leFichier, `             { \n `);
+    fs.appendFileSync(leFichier, `                 "title" : "Boots", \n `);
+    fs.appendFileSync(leFichier, `                 "link" : "/category/boots", \n `);
+    fs.appendFileSync(leFichier, `                 "order" : 1 \n `);
+    fs.appendFileSync(leFichier, `             }, \n `);
+    fs.appendFileSync(leFichier, `             { \n `);
+    fs.appendFileSync(leFichier, `                 "title" : "Acier", \n `);
+    fs.appendFileSync(leFichier, `                 "link" : "/category/acier", \n `);
+    fs.appendFileSync(leFichier, `                 "order" : 2 \n `);
+    fs.appendFileSync(leFichier, `             }, \n `);
+    fs.appendFileSync(leFichier, `             { \n `);
+    fs.appendFileSync(leFichier, `                 "title" : "Aluminium", \n `);
+    fs.appendFileSync(leFichier, `                 "link" : "/category/aluminium", \n `);
+    fs.appendFileSync(leFichier, `                 "order" : 3 \n `);
+    fs.appendFileSync(leFichier, `             }, \n `);
+    fs.appendFileSync(leFichier, `             { \n `);
+    fs.appendFileSync(leFichier, `                 "title" : "StainLess Steal", \n `);
+    fs.appendFileSync(leFichier, `                 "link" : "/category/stainlesssteal", \n `);
+    fs.appendFileSync(leFichier, `                 "order" : 4 \n `);
+    fs.appendFileSync(leFichier, `             } \n `);
+    fs.appendFileSync(leFichier, `         ] \n `);
+    fs.appendFileSync(leFichier, `     } \n `);
+    fs.appendFileSync(leFichier, ` } \n `);
+
     sql.close();
   } catch (err) {
     console.log("section catch")
@@ -483,4 +658,38 @@ async function pipeMsSQLtoMongo_async(){
   }
 
 };
+
+exports.getCookieResultat = function (request, result, next) {
+  console.log( "DEBUT exports.getCookieResultat" );
+
+  console.log( "request.user=" + request.user);
+  console.log( "request.session=" + JSON.stringify(request.session));
+  let id = request.param('id').toString();
+  console.log( "===>>>request.params.id=" + id);
+
+  console.log('req.titi=session.user=' + JSON.stringify( request.session.user ) );
+  console.log('req.titi=session.secret=' + JSON.stringify( request.session.secret ) );
+
+
+  //request.session
+  console.log('sess=' + sess );
+
+  /*
+  let ii=0;
+  for( let unItem in request){
+      //console.log( "req.unItem=" + unItem);
+    //console.log( unItem +"=req.param="+request.param('unItem') );
+    //console.log( unItem +"=="+request.param('unItem') );
+    //console.log("");
+    ii++;
+  }*/
+ /////result.send('GET getCookieResultat');
+  return result.status(200).send("Welcome to super-s = " + JSON.stringify( request.session.user ));
+
+}
 /* commentaire en FIN */
+/*
+git add .
+git commit -m " ecrire message"
+git push origin master
+*/
