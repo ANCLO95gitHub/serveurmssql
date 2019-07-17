@@ -33,14 +33,17 @@ const config = {
 // AC: ICI     /*****************************************************************************/
 exports.getHome = function(request, response, next){
   console.log( "DEBUT          GET request to the homepage" );
-  sess = JSON.stringify(request.session);
-  console.log('sess=' + sess );
-  request.session.user = 'edivasfdasdfqwf234t23g24g2g245gh245g2g';
-  console.log('DEBUT  public/index.html   res.sendFile (serveurmssql)Salut le Monde, Hello World!, Hola el Mundo')
+  request.session.user = { 'id': 'abc123' };
+  request.session.pageviews = 1;
+  /////sess = JSON.stringify(request.session);
+  sess = request.session;
+    console.log('sess=' + sess );
+  //request.session.user = 'edivasfdasdfqwf234t23g24g2g245gh245g2g';
+    console.log('sess=', JSON.stringify(sess));
   //res.sendFile(path.join(__dirname, 'public/index.html')); // views
   //response.send('DEBUT  public/index.html   res.sendFile (serveurmssql)Salut le Monde, Hello World!, Hola el Mundo');
 
-  response.status(200).send('GET request to the homepage ::sess=' + sess);
+  response.status(200).send('GET request to the homepage ::sess=' + JSON.stringify(sess));
 }
 exports.getWhoAmI = function(req, res){
   console.log( "DEBUT  export.getWhoAmI = function(req, res){" );
@@ -660,19 +663,21 @@ async function pipeMsSQLtoMongo_async(){
 };
 
 exports.getCookieResultat = function (request, result, next) {
-  console.log( "DEBUT exports.getCookieResultat" );
-
-  console.log( "request.user=" + request.user);
-  console.log( "request.session=" + JSON.stringify(request.session));
+  console.log( "\nDEBUT exports.getCookieResultat" );
+  console.log('request.session.user=' + JSON.stringify( request.session.user ) );
+  console.log('JSON.stringify(request)=', JSON.stringify(request.query));
+  console.log('sess=', JSON.stringify(sess));
   let id = request.param('id').toString();
   console.log( "===>>>request.params.id=" + id);
+  console.log( '\n');
+  console.log('request.params=', request.params);  //ac:OK
+  console.log('request.body=', request.body);
+  console.log('request.query=', request.query);
+//  console.log( "request.user=" + request.user);
+//  console.log( "request.session=" + JSON.stringify(request.session));
 
-  console.log('req.titi=session.user=' + JSON.stringify( request.session.user ) );
-  console.log('req.titi=session.secret=' + JSON.stringify( request.session.secret ) );
-
-
+//  console.log('req.titi=session.secret=' + JSON.stringify( request.session.secret ) );
   //request.session
-  console.log('sess=' + sess );
 
   /*
   let ii=0;
@@ -684,7 +689,7 @@ exports.getCookieResultat = function (request, result, next) {
     ii++;
   }*/
  /////result.send('GET getCookieResultat');
-  return result.status(200).send("Welcome to super-s = " + JSON.stringify( request.session.user ));
+  return result.status(200).send("Welcome to super-s = " + JSON.stringify( request.session ));
 
 }
 /* commentaire en FIN */

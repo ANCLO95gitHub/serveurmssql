@@ -25,11 +25,12 @@ const corsOptions = {
 };
 
 let app = express();
+let jsonParser = bodyParser.json();
+let  urlencodedParser = bodyParser.urlencoded({extended: false});
 //app.use(session( {secret:"abc123", resave:false,saveUninitialized:true}));
 //app.use(session( {secret:"abc123"}));
 //app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({ extended: false }));
-
 
 app.set('port', process.env.PORT || 1337);
 
@@ -42,8 +43,8 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-/* app.get('/', function (req, res) {
+/*
+app.get('/', function (req, res) {
     console.log('DEBUT  public/index.html   res.sendFile (serveurmssql)Salut le Monde, Hello World!, Hola el Mundo')
     //res.sendFile(path.join(__dirname, 'public/index.html')); // views
     res.send('DEBUT  public/index.html   res.sendFile (serveurmssql)Salut le Monde, Hello World!, Hola el Mundo');
@@ -52,7 +53,7 @@ app.use(passport.session());
 app.get('/', inventaire.getHome);
 app.get('/getinventaire', inventaire.getInventaire);
 app.get('/getinventaire/:id&:laSession', inventaire.getInventaire);
-app.post('/postkart', inventaire.postKart);
+app.post('/postkart', urlencodedParser, inventaire.postKart);
 app.get('/getkart', inventaire.getKart);
 app.post('/deletekart', inventaire.deleteKart)
 app.post('/pipeMsSQLtoMongo', inventaire.pipeMsSQLtoMongo)
