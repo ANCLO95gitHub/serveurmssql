@@ -29,8 +29,8 @@ let jsonParser = bodyParser.json();
 let  urlencodedParser = bodyParser.urlencoded({extended: false});
 //app.use(session( {secret:"abc123", resave:false,saveUninitialized:true}));
 //app.use(session( {secret:"abc123"}));
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.set('port', process.env.PORT || 1337);
 
@@ -53,8 +53,9 @@ app.get('/', function (req, res) {
 app.get('/', inventaire.getHome);
 app.get('/getinventaire', inventaire.getInventaire);
 app.get('/getinventaire/:id&:laSession', inventaire.getInventaire);
-app.post('/postkart', urlencodedParser, inventaire.postKart);
+app.post('/postkart',  inventaire.postKart); //urlencodedParser,
 app.get('/getkart', inventaire.getKart);
+app.get('/getkart/:id', inventaire.getKart);
 app.post('/deletekart', inventaire.deleteKart)
 app.post('/pipeMsSQLtoMongo', inventaire.pipeMsSQLtoMongo)
 

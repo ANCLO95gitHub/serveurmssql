@@ -19,20 +19,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="9" column="48" lean-forward="true" selection-start-line="9" selection-start-column="48" selection-end-line="9" selection-end-column="48" />
+            <state relative-caret-position="91">
+              <caret line="53" column="23" selection-start-line="53" selection-start-column="10" selection-end-line="53" selection-end-column="23" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="672" column="58" lean-forward="true" selection-start-line="672" selection-start-column="58" selection-end-line="672" selection-end-column="58" />
+            <state relative-caret-position="530">
+              <caret line="445" column="16" lean-forward="true" selection-start-line="445" selection-start-column="16" selection-end-line="445" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -49,8 +49,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="25" selection-start-line="25" selection-end-line="25" />
+            <state relative-caret-position="170">
+              <caret line="10" column="6" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -68,22 +68,12 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>crequest</find>
-      <find>request</find>
-      <find>InvenDet</find>
-      <find>OptionZ</find>
-      <find>main</find>
-      <find>Consommer</find>
       <find>getPoidsMetaux4</find>
-      <find>getkart</find>
       <find>getKart</find>
       <find>post</find>
-      <find>postKart</find>
-      <find>postkart</find>
       <find>get</find>
       <find>http</find>
       <find>lareponse</find>
-      <find>getinventaire</find>
       <find>getInventaire</find>
       <find>app</find>
       <find>dirname</find>
@@ -95,9 +85,19 @@
       <find>cookieParser</find>
       <find>getHome</find>
       <find>cookieSession</find>
-      <find>express</find>
       <find>getCookieResultat</find>
       <find>request.session.user</find>
+      <find>postKart</find>
+      <find>postkart</find>
+      <find>body</find>
+      <find>deleteKart</find>
+      <find>express</find>
+      <find>bodyParser</find>
+      <find>jsonParser</find>
+      <find>json</find>
+      <find>deletekart</find>
+      <find>getkart</find>
+      <find>getinventaire</find>
     </findStrings>
     <dirStrings>
       <dir>C:\nodejs\sample\serveurmssql</dir>
@@ -111,8 +111,8 @@
       <list>
         <option value="$PROJECT_DIR$/routes/Inventaire.ts" />
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/routes/Inventaire.js" />
         <option value="$PROJECT_DIR$/index.js" />
+        <option value="$PROJECT_DIR$/routes/Inventaire.js" />
       </list>
     </option>
   </component>
@@ -123,10 +123,10 @@
     <auto-save>true</auto-save>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="518" />
-    <option name="y" value="441" />
-    <option name="width" value="1164" />
-    <option name="height" value="951" />
+    <option name="x" value="351" />
+    <option name="y" value="427" />
+    <option name="width" value="1289" />
+    <option name="height" value="972" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -207,12 +207,12 @@
       <workItem from="1561033408992" duration="4365000" />
       <workItem from="1561464985381" duration="32806000" />
       <workItem from="1561666960162" duration="1334000" />
-      <workItem from="1563191603954" duration="36245000" />
+      <workItem from="1563191603954" duration="48029000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="181159000" />
+    <option name="totallyTimeSpent" value="192943000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -224,10 +224,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="518" y="441" width="1164" height="951" extended-state="0" />
+    <frame x="351" y="427" width="1289" height="972" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13410302" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12070344" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -241,7 +241,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.19926651" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.21454112" />
       <window_info anchor="bottom" id="TypeScript" order="11" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -291,22 +291,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="25" selection-start-line="25" selection-end-line="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="672" column="58" lean-forward="true" selection-start-line="672" selection-start-column="58" selection-end-line="672" selection-end-column="58" />
+        <state relative-caret-position="170">
+          <caret line="10" column="6" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="48" lean-forward="true" selection-start-line="9" selection-start-column="48" selection-end-line="9" selection-end-column="48" />
+        <state relative-caret-position="91">
+          <caret line="53" column="23" selection-start-line="53" selection-start-column="10" selection-end-line="53" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="530">
+          <caret line="445" column="16" lean-forward="true" selection-start-line="445" selection-start-column="16" selection-end-line="445" selection-end-column="16" />
         </state>
       </provider>
     </entry>

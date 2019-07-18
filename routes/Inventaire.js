@@ -333,7 +333,18 @@ async function getInventaire_async(res, MB, Forme)  {
 ///// ICI le client place son choix dans son kart
 exports.postKart = function( request, response){
   request.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
-  console.log('DEBUT:: exports.postKart = function( request, response){   2 calls ....');
+  if( !request.body){
+    console.log('status code 400');
+   ///// return response.sendStatus(400);
+  }else{
+    console.log('PAS DE status code 400');
+  }
+//  console.log('JSON.stringify(request.body)=', JSON.stringify(request.body));
+  //let clientID = request.param('clientID');
+  //console.log(' let clientID=' + clientID );
+//  console.log('JSON.stringify(request.body)=', JSON.stringify(request.body));
+
+  console.log('ICI::req.body.clientID=' + request.body.clientID );
   console.log('req.body.ExPurcId=' + request.body.ExPurcId );
   sql.close();
   postKart_async( request.body.clientID, request.body.courriel, request.body.IDID, request.body.ExPurcId, request.body.laLongueur, request.body.Quantity, request.body.prix, request.body.OptionZ, request.body.response);
@@ -391,13 +402,14 @@ async function updateSelecteurInventaire_async(  IDID, laLongueur, Quantity, res
     console.log(err)
   }
 };
-
+/// ac:ici
 exports.getKart = function (req, res) {
   req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
   ///console.log('DEBUT  exports.getInventaire = function (req, res) {   req.params.id=' + req.query.id);
   console.log('DEBUT  exports.getKart = function (req, res)' );
   res.header("content-type: application/json");
-  //let id = req.param('id').toString();
+  console.log('id=', req.param('id') );
+  let id = req.param('id').toString();
   //if( !( id >=0 )){
   //  id=3100;  // ac: reviser
   //}
@@ -406,21 +418,30 @@ exports.getKart = function (req, res) {
   //console.log('MB = ' + MB);
   //console.log('Forme = ' + Forme );
   sql.close();
-  getKart_async(res);
+  getKart_async(res, id);
   console.log('getInventaire_async(res, MB, Forme); complete');
 }
-async function getKart_async(res)  {
+async function getKart_async(res, id)  {
   try {
     // AC: TODO faire une restriction par client
     console.log('DEBUT async function Kart() ');
+    let retData='';
     // make sure that any items are correctly URL encoded in the connection string
     //let theConnect = 'mssql://andrec:Bonjour1@srv-lrobo-sql-cloud.database.windows.net/LR_INV_CLOUD;encrypt=true'
     let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
     await sql.connect(config)
-    const result = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where Quantity != -1 ORDER BY Kart.ID  `
+    if( id !== '0'){
+      console.log('if');
+      const result = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where Quantity != -1 AND clientID = ${id} ORDER BY Kart.ID  `
+      retData = { status: true, KartMetaux: result.recordset  };
+    }else{
+      console.log('else');
+      const result2 = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where Quantity != -1 ORDER BY Kart.ID  `
+      retData = { status: true, KartMetaux: result2.recordset  };
+    }
     //console.log(result)
     //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
-    let retData = { status: true, KartMetaux: result.recordset  };
+
     res.json(retData);
     sql.close();
   } catch (err) {
