@@ -88,8 +88,9 @@ exports.getWhoAmI = function(req, res){
   //console.log( "res.status=" + res.status);
   console.log( "ii=" + ii);
 
-    let lareponse = { reponse: req.hostname, laSession: res.session};
-    res.json(lareponse);
+  let lareponse = { reponse: req.hostname, laSession: res.session};
+  //let lareponse = { reponse: 'blable' };
+  res.json(lareponse);
 
 };
 exports.setWhoAmI = function(req, res){
@@ -301,24 +302,33 @@ async function getInventaire_async(res, MB, Forme)  {
         ///ac: reviser le ID entre ticks
         ///const result = await sql.query`select DISTINCT * from SelecteurInventaire where ID <= ${id} AND DiminutifForme <> 'PL' `
         //const result = await sql.query`select DISTINCT * from SelecteurInventaire where DiminutifMB = ${MB} AND DiminutifForme = ${Forme}  `
-      const result = await sql.query`select ID,
-            InPurcId_ExPurcId,
-            ExPurcId,
-            NomMB,
-            DiminutifMB,
-            NomForme,
-            DiminutifForme,
-            ThickDiam,
-            OptionX,
-            OptionY,
-            case when Modifier = 1 then OptionZ_modif when Morceler = 1 then OptionZ_modif else OptionZ  end as OptionZ,
-            Grade,
-            DescriptionCourte,
-            DescriptionLongue,
-            Montant,
-            Modifier,
-            Consommer
-        from SelecteurInventaire where DiminutifMB = ${MB} AND DiminutifForme = ${Forme} AND Consommer = 0 AND Karted = 0 ORDER BY DescriptionCourte `
+      const result = await sql.query`select SI.ID,
+    SI.InPurcId_ExPurcId,
+    SI.ExPurcId,
+    SI.NomMB,
+    SI.DiminutifMB,
+    SI.NomForme,
+    SI.DiminutifForme,
+    SI.ThickDiam,
+    SI.OptionX,
+    SI.OptionY,
+    case when SI.Modifier = 1 then SI.OptionZ_modif when SI.Morceler = 1 then SI.OptionZ_modif else SI.OptionZ  end as OptionZ,
+    SI.Grade,
+    SI.DescriptionCourte,
+    SI.DescriptionLongue,
+    ROUND(SI.Montant * ( 1 + MB.MargeBenef_P), 2) as Montant,
+    SI.Modifier,
+    SI.Consommer
+from SelecteurInventaire SI inner join MargeBenef MB on SI.NomMB = MB.NomMB 
+     AND SI.NomForme = MB.NomForme  AND IsNull(SI.ThickDiam,0) = IsNull(MB.ThickDiam,0) 
+     AND IsNull(SI.OptionX,0) = IsNull(MB.OptionX,0) 
+     AND IsNull(SI.OptionY,0) = IsNull(MB.OptionY,0) 
+     AND IsNull(SI.OptionZ,0) = IsNull(MB.OptionZ,0) 
+     AND IsNull(SI.Grade,0) = IsNull(MB.Grade,0)
+ where DiminutifMB = ${MB} AND DiminutifForme = ${Forme} AND Consommer = 0 AND Karted = 0 
+   AND MB.MargeBenef_P IS NOT NULL AND MB.Actif = 1
+   AND MB.NomForme != 'Plat'
+ ORDER BY DescriptionCourte `
 
        // console.log(result)
         //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
@@ -404,12 +414,16 @@ async function updateSelecteurInventaire_async(  IDID, laLongueur, Quantity, res
 };
 /// ac:ici
 exports.getKart = function (req, res) {
-  req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
+  //req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
+  req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE', 'Access-Control-Allow-Headers': 'Content-Type ");
   ///console.log('DEBUT  exports.getInventaire = function (req, res) {   req.params.id=' + req.query.id);
   console.log('DEBUT  exports.getKart = function (req, res)' );
   res.header("content-type: application/json");
   console.log('id=', req.param('id') );
-  let id = req.param('id').toString();
+  let id = req.param('id').toString().trim();
+  console.log('let id=' + id  );
+  let testing = req.params.id;
+  console.log('let testing=' + testing  );
   //if( !( id >=0 )){
   //  id=3100;  // ac: reviser
   //}
@@ -417,14 +431,18 @@ exports.getKart = function (req, res) {
   //let Forme = id.toString().substr( 2);
   //console.log('MB = ' + MB);
   //console.log('Forme = ' + Forme );
+  //let lareponse = { tata: 'tete'};
+  //res.json(lareponse);
+  if( 1 == 1){
   sql.close();
   getKart_async(res, id);
+  }
   console.log('getInventaire_async(res, MB, Forme); complete');
 }
 async function getKart_async(res, id)  {
   try {
     // AC: TODO faire une restriction par client
-    console.log('DEBUT async function Kart() ');
+    console.log('DEBUT async function Kart() ', id);
     let retData='';
     // make sure that any items are correctly URL encoded in the connection string
     //let theConnect = 'mssql://andrec:Bonjour1@srv-lrobo-sql-cloud.database.windows.net/LR_INV_CLOUD;encrypt=true'
@@ -432,11 +450,12 @@ async function getKart_async(res, id)  {
     await sql.connect(config)
     if( id !== '0'){
       console.log('if');
-      const result = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where Quantity != -1 AND clientID = ${id} ORDER BY Kart.ID  `
+      console.log(`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 AND courriel = ${id} ORDER BY Kart.ID`  );
+      const result = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 AND courriel = ${id} ORDER BY Kart.ID`
       retData = { status: true, KartMetaux: result.recordset  };
     }else{
       console.log('else');
-      const result2 = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where Quantity != -1 ORDER BY Kart.ID  `
+      const result2 = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 ORDER BY Kart.ID  `
       retData = { status: true, KartMetaux: result2.recordset  };
     }
     //console.log(result)
@@ -543,7 +562,7 @@ async function pipeMsSQLtoMongo_async(){
              Modifier,
              Consommer
         from SelecteurInventaire
-         WHERE ( DiminutifForme != 'PL' ) AND Consommer = 0 AND Karted = 0  
+         WHERE ( DiminutifForme != 'PL' ) AND Consommer = 0 AND Karted = 0
         ORDER BY DescriptionCourte `
 
     // console.log(result)
