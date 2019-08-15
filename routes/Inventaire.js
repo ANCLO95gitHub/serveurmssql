@@ -3,6 +3,7 @@ let sql = require('mssql');
 const Connection = require('tedious').Connection;  // ac: de Quick.js
 const Request = require('tedious').Request;
 const fs = require('fs');
+const nodeMailer = require('nodemailer');
 let aSession = []
 let aSessionID = 'sid123'
 let aInc = 1;
@@ -29,7 +30,7 @@ const config = {
     password: 'Bonjour1',
     encrypt: true
 };
-
+/*****************************************************************************/
 // AC: ICI     /*****************************************************************************/
 exports.getHome = function(request, response, next){
   console.log( "DEBUT          GET request to the homepage" );
@@ -45,13 +46,23 @@ exports.getHome = function(request, response, next){
 
   response.status(200).send('GET request to the homepage ::sess=' + JSON.stringify(sess));
 }
+/*****************************************************************************/
 exports.getWhoAmI = function(req, res){
   console.log( "DEBUT  export.getWhoAmI = function(req, res){" );
   console.log( "req.DateTime=" + req.DateTime);
   console.log( "req.data=" + req.data);
   console.log( "req.hostname=" + req.hostname);
-  console.log( "req.host=" + req.host);
-  console.log( "req.client=" + req.client);
+  console.log( "req.host=" + req.host); // use hostname instead
+  console.log( "req.client=" + req.client); //qqc
+  console.log( "req.client.connecting=" + req.client.connecting); //qqc
+  console.log( "req.client._host=" + req.client._host); //qqc
+  console.log( "req.client.server=" + req.client.server); //qqc
+  for( let clicli in req.client){
+    console.log( " clicli=" + clicli ); //qqc
+    if( clicli !== "_events"){
+      console.log( "req.client[clicli]=" + req.client[clicli]); //qqc
+    }
+  }
   console.log( "req.statusCode=" + req.statusCode);
   console.log( "req.statusMessage=" + req.statusMessage);
 
@@ -343,7 +354,7 @@ from SelecteurInventaire SI inner join MargeBenef MB on SI.NomMB = MB.NomMB
 ///// ICI le client place son choix dans son kart
 exports.postKart = function( request, response){
   request.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
-  if( !request.body){
+  if(!request.body){
     console.log('status code 400');
    ///// return response.sendStatus(400);
   }else{
@@ -361,31 +372,33 @@ exports.postKart = function( request, response){
   ///sql.close();
   ///updateSelecteurInventaire_async( request.body.IDID, request.body.laLongueur, request.body.Quantity, response);
 };
-async function postKart_async(clientID, courriel, IDID, ExPurcId, laLongueur, Quantity, prix, OptionZ, response)  {
+async function postKart_async(clientID, courriel, IDID, ExPurcId, laLongueur, Quantity, prix, OptionZ, response) {
   try {
       let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
       await sql.connect(config)
-      //console.log('POST req.body.ExPurcId=' + request.body.ExPurcId );
-      //let ls_sql = `INSERT INTO dbo.Kart( InPurcId_ExPurcId ) VALUES( '${clientID}' ) `;
-      //const result = await sql.query `${ls_sql}`;
+      const resultCNT = await sql.query`select Count( IDID ) as cnt from dbo.Kart where IDID = ${IDID}`
+      console.log('resultCount.recordset[0].cnt=' + JSON.stringify(resultCNT.recordset[0].cnt ));//ac: ok
+      let cnt = JSON.stringify(resultCNT.recordset[0].cnt );
+
       console.log('Quantity=' + Quantity );
-    //for( let jj = 1 ; jj <= +Quantity ; jj++ ){
       console.log("postKart_async ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
-      const result = await sql.query`INSERT INTO dbo.Kart( clientID, courriel, IDID, InPurcId_ExPurcId, Longueur, Quantity, prix  ) VALUES( ${clientID},${courriel},${IDID},${ExPurcId},${laLongueur},${Quantity},${prix}  ) `;
-      console.log(result)
-      //}
-
-
-    let resultat = (+laLongueur * +Quantity);
-    console.log("updateSelecteurInventaire_async::resultat=" + resultat)
-    let lbConsommer = false
-    if( resultat >= +OptionZ){ []
-      lbConsommer = true
-    }
-    const result2 = await sql.query`UPDATE  dbo.SelecteurInventaire set  Consommer = ${lbConsommer},  Karted = 1, Morceler = 1, OptionZ_modif = (OptionZ_modif - ${resultat} ) where ID = ${IDID} `;
-    console.log(result2)
-      //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
-      let retData = { "status": true }; //, "valDeRetour": result.recordset
+      if( +cnt === 0){
+        const result = await sql.query`INSERT INTO dbo.Kart( clientID, courriel, IDID, InPurcId_ExPurcId, Longueur, Quantity, prix  ) VALUES( ${clientID},${courriel},${IDID},${ExPurcId},${laLongueur},${Quantity},${prix}  ) `;
+        console.log(result)
+        let resultat = (+laLongueur * +Quantity);
+        console.log("updateSelecteurInventaire_async::resultat=" + resultat)
+        let lbConsommer = false
+        if( resultat >= +OptionZ){ []
+          lbConsommer = true
+        }
+        const result2 = await sql.query`UPDATE  dbo.SelecteurInventaire set  Consommer = ${lbConsommer}, Karted = 1, Morceler = 1, OptionZ_modif = (OptionZ_modif - ${resultat} ) where ID = ${IDID} `;
+        console.log(result2)
+          //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
+        let retData = { "status": true }; //, "valDeRetour": result.recordset
+      }
+      if( !cnt === 0 ){
+        let retData = { "status": false }; //, "valDeRetour": result.recordset
+      }
       //response.JSON(retData);
   } catch (err) {
       console.log("section catch  du postKart_async")
@@ -452,7 +465,7 @@ async function getKart_async(res, id)  {
       console.log('if');
       console.log(`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 AND courriel = ${id} ORDER BY Kart.ID`  );
       const result = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 AND courriel = ${id} ORDER BY Kart.ID`
-      retData = { status: true, KartMetaux: result.recordset  };
+      retData = { status: true, KartMetaux: result.recordset };
     }else{
       console.log('else');
       const result2 = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 ORDER BY Kart.ID  `
@@ -470,7 +483,7 @@ async function getKart_async(res, id)  {
 };
 
 exports.deleteKart = function( request, response){
-  console.log('req.body.ExPurcId=' + request.body.IDID );
+  console.log('req.body.ExPurcId=' + request.body.IDID );  //ac: semble OK
   sql.close();
   deleteKart_async( request.body.IDID );
 };
@@ -488,7 +501,7 @@ async function deleteKart_async(IDID){
   }
 
   try{
-    const result2 = await sql.query`UPDATE dbo.SelecteurInventaire  set Karted = 0 where ID = ${IDID} `;
+    const result2 = await sql.query`UPDATE dbo.SelecteurInventaire set Karted = 0 where ID = ${IDID} `;
     console.log(result2)
     sql.close();
   }
@@ -731,10 +744,147 @@ exports.getCookieResultat = function (request, result, next) {
  /////result.send('GET getCookieResultat');
   return result.status(200).send("Welcome to super-s = " + JSON.stringify( request.session ));
 
-}
+};
 /* commentaire en FIN */
 /*
 git add .
 git commit -m " ecrire message"
 git push origin master
 */
+
+exports.createAccount = function (request, result, next) {
+  request.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
+  if( !request.body){
+    console.log('status code 400');
+    ///// return response.sendStatus(400);
+  }else{
+    console.log('PAS DE status code 400');
+  }
+//  console.log('JSON.stringify(request.body)=', JSON.stringify(request.body));
+  //let clientID = request.param('clientID');
+  //console.log(' let clientID=' + clientID );
+//  console.log('JSON.stringify(request.body)=', JSON.stringify(request.body));
+
+  console.log('ICI::request.body.username=' + request.body.Email );
+  console.log('ICI::request.username=' + request.Email );
+  let username = request.param('Email');//.toString();
+  console.log(' OK let  request.param=' + username );
+  let username2 = request.body.Email;//.toString();
+  console.log(' OK let username2=' + username2 );
+  let username3 = request.query.Email;//.toString();
+  console.log('NON let username3=' + username3 );
+
+  console.log('request.phone=' + request.param('phone'));
+  sql.close();
+  createAccount_async( request, request.param('Email'), request.param('phone'), request.param('address'), request.param('city'), request.param('postalcode') );
+
+};
+async function createAccount_async(request, Email, phone, address, city, postalcode) {
+  try {
+    let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
+    await sql.connect(config)
+    ///ac: Verifier s il existe avant d inserer.
+    const resultCount = await sql.query`select count(1) as cnt from dbo.Comptes where email = ${Email} `
+    /*
+    console.log('resultCount=' + resultCount );
+    console.log('resultCount=' + JSON.stringify(resultCount ));
+    console.log('resultCount.recordsets=' + resultCount.recordsets );
+    console.log('resultCount.recordsets=' + JSON.stringify(resultCount.recordsets ));
+    console.log('resultCount.recordset=' + JSON.stringify(resultCount.recordset ));
+    console.log('resultCount.recordset[0]=' + JSON.stringify(resultCount.recordset[0] ));
+    */
+    console.log('resultCount.recordset[0].cnt=' + JSON.stringify(resultCount.recordset[0].cnt ));//ac: ok
+    let cnt = JSON.stringify(resultCount.recordset[0].cnt );
+    if( +cnt < 1){
+      const result = await sql.query`INSERT INTO dbo.Comptes( email, phone, address, city, postalCode)
+                                       VALUES( ${Email}, ${phone}, ${address}, ${city}, ${postalcode} ) `
+    }
+
+
+    let retData = { "status": true }; //, "valDeRetour": result.recordset
+    //resultCount.JSON(retData);
+  } catch (err) {
+    console.log("catch (err) createAccount_async(res::section catch err=" + err);
+    console.log(err);
+  }
+};
+///////////////////////////////////////////////////////////
+exports.isClientID = function (request, result, next) {
+  request.header("content-type: application/json, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE', 'Access-Control-Allow-Headers': 'Content-Type ");
+  //request.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
+  if(!request.body){
+    console.log('isClientID::status code 400');
+    ///// return response.sendStatus(400);
+  }else{
+    console.log('isClientID::PAS DE status code 400');
+  }
+
+  //console.log('id=', request.param('id') );
+  let Email = request.param('id').toString().trim();
+  console.log('ICI let id=[' + Email + "]");
+  //let testing = request.params.id;
+  //console.log('let testing=' + testing  );
+
+  sql.close();
+  isClientID_async(request, result, Email);
+
+};
+async function isClientID_async(request, result, Email) {
+  try {
+    console.log('ICI DEBUT async function isClientID_async(request, result, Email)  Email=[' + Email + ']' );
+    let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
+    console.log('ICI  avant sql.connect(config)');
+    await sql.connect(config)
+    ///ac: Verifier s il existe avant d inserer.
+    console.log('ICI  avant SELECT COUNT(1)');
+    const resultCount = await sql.query`select count(1) as cnt from dbo.Comptes where RTrim(LTrim(email)) = ${Email} `
+    //const resultCount = await sql.query`select count(1) as cnt from dbo.Comptes where RTrim(LTrim(email)) = 'andre.cloutier.4@ulaval.ca' `
+    console.log('ICI  apres  SELECT COUNT(1)  resultCount=' + JSON.stringify(resultCount));
+    console.log('resultCount.recordset[0].cnt=' + JSON.stringify(resultCount.recordset[0].cnt ));//ac: ok
+    let cnt = JSON.stringify(resultCount.recordset[0].cnt );
+    console.log('ICI avant if() cnt=[' + cnt +']');
+    let retData;
+    if( +cnt < 1){
+      retData = { status: false }; //
+      console.log('ICI if()');
+    }else{
+      retData = { status: true }; //, KartMetaux: resultCount.recordset };
+      console.log('ICI else()');
+    }
+    console.log('ICI retData=' + retData );
+    result.json(retData);
+    sql.close();
+  } catch (err) {
+    console.log('ICI catch (err) =' + err );
+  }
+}
+
+//         secure: true,
+//      host: 'smtp.gmail.com',
+//      port: 465,
+exports.sendEmail = function (request, result, next) {
+  let transporter = nodeMailer.createTransport({
+    service: 'gmail',
+
+    auth: {
+      user: 'andrecloutier9@gmail.com',
+      pass: 'andala'
+    }
+  });
+  let mailOptions = {
+    from: '"TANCLOU" <andrecloutier9@gmail.com>', // sender address
+    to: 'andre.cloutier.4@ulaval.ca', // list of receiversreq.body.to
+    subject: 'req.body.subject', // Subject line
+    text: 'req.body.body', // plain text body
+    html: '<b>NodeJS Email Tutorial</b>' // html body
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Message %s sent: %s', info.messageId, info.response);
+    res.render('index');
+  });
+
+};

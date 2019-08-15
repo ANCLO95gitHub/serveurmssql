@@ -8,6 +8,7 @@ const keys = require('./config/keys');
 const passport = require('passport');
 const session = require('express-session');
 const cookieSession = require('cookie-session');
+//const paypal = require('paypal-rest-sdk');
 
 //const router = express.Router()
 /////npm install vue-cookie --save
@@ -18,9 +19,10 @@ let VueCookie = require('vue-cookie');
 // Tell Vue to use the plugin
 Vue.use(VueCookie);
 }
+// methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'UPDATE'],
 const corsOptions = {
     origin: '*',
-    methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'UPDATE'],
+    methods: ['GET', 'PUT', 'POST',  'DELETE'],
     credentials: true
 };
 
@@ -34,16 +36,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.set('port', process.env.PORT || 1337);
 
-if( 1 == 1 ){
-app.use(cors(corsOptions));
+if( 1 === 1 ){
+    app.use(cors(corsOptions));
 
-app.use(cookieSession({
-    maxAge: 24 * 60 * 60 * 1000,
-    keys: [keys.session.cookieKey]
-}));
-//initialize passport
-app.use(passport.initialize());
-app.use(passport.session());
+    app.use(cookieSession({
+        maxAge: 24 * 60 * 60 * 1000,
+        keys: [keys.session.cookieKey]
+    }));
+    //initialize passport
+    app.use(passport.initialize());
+    app.use(passport.session());
 }
 /*
 app.get('/', function (req, res) {
@@ -53,20 +55,35 @@ app.get('/', function (req, res) {
 }); */
 /** ***/
 app.get('/', inventaire.getHome);
+app.get('/getWhoAmI', inventaire.getWhoAmI);
 app.get('/getinventaire', inventaire.getInventaire);
 app.get('/getinventaire/:id&:laSession', inventaire.getInventaire);
+
+
 app.post('/postkart',  inventaire.postKart); //urlencodedParser,
 app.get('/getkart', inventaire.getKart);
 app.get('/getkart/:id', inventaire.getKart);
+app.get('/isClientID', inventaire.isClientID);
+app.get('/isClientID/:id', inventaire.isClientID);
+
+
 app.post('/deletekart', inventaire.deleteKart)
 app.post('/pipeMsSQLtoMongo', inventaire.pipeMsSQLtoMongo)
 app.get('/getPoidsMetaux', inventaire.getPoidsMetaux);
 
-app.get('/getWhoAmI', inventaire.getWhoAmI);
+
 
 app.get('/setWhoAmI/:id', inventaire.setWhoAmI);
 app.get('/logout', inventaire.logout);
 app.get('/getCookieResultat/:id', inventaire.getCookieResultat);
+app.post('/createAccount', inventaire.createAccount);
+
+
+app.post('/send-email', inventaire.sendEmail );
+
+////// PAYPAL
+
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
