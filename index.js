@@ -59,7 +59,6 @@ app.get('/getWhoAmI', inventaire.getWhoAmI);
 app.get('/getinventaire', inventaire.getInventaire);
 app.get('/getinventaire/:id&:laSession', inventaire.getInventaire);
 
-
 app.post('/postkart',  inventaire.postKart); //urlencodedParser,
 app.get('/getkart', inventaire.getKart);
 app.get('/getkart/:id', inventaire.getKart);
@@ -71,15 +70,16 @@ app.post('/deletekart', inventaire.deleteKart)
 app.post('/pipeMsSQLtoMongo', inventaire.pipeMsSQLtoMongo)
 app.get('/getPoidsMetaux', inventaire.getPoidsMetaux);
 
-
-
 app.get('/setWhoAmI/:id', inventaire.setWhoAmI);
 app.get('/logout', inventaire.logout);
 app.get('/getCookieResultat/:id', inventaire.getCookieResultat);
 app.post('/createAccount', inventaire.createAccount);
 
-
 app.post('/send-email', inventaire.sendEmail );
+
+app.post('/paymentAuthorized', inventaire.paymentAuthorized );
+app.post('/paymentCompleted', inventaire.paymentCompleted );
+app.post('/paymentCancelled', inventaire.paymentCancelled );
 
 ////// PAYPAL
 

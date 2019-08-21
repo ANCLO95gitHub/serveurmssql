@@ -464,7 +464,7 @@ async function getKart_async(res, id)  {
     if( id !== '0'){
       console.log('if');
       console.log(`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 AND courriel = ${id} ORDER BY Kart.ID`  );
-      const result = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 AND courriel = ${id} ORDER BY Kart.ID`
+      const result = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1 AND vendu = 0 AND courriel = ${id} ORDER BY Kart.ID`
       retData = { status: true, KartMetaux: result.recordset };
     }else{
       console.log('else');
@@ -771,15 +771,19 @@ exports.createAccount = function (request, result, next) {
   console.log(' OK let  request.param=' + username );
   let username2 = request.body.Email;//.toString();
   console.log(' OK let username2=' + username2 );
-  let username3 = request.query.Email;//.toString();
+  let username3 = request.body.Email;//.toString();
   console.log('NON let username3=' + username3 );
+  let password = request.body.password;//.toString();
+  console.log('NON let password=' + password );
+  let password2 = request.body.password;//.toString(); //ac: bon
+  console.log('NON let password2=' + password2 );
 
   console.log('request.phone=' + request.param('phone'));
   sql.close();
-  createAccount_async( request, request.param('Email'), request.param('phone'), request.param('address'), request.param('city'), request.param('postalcode') );
+  createAccount_async( request, request.param('Email'), request.param('phone'), request.param('address'), request.param('city'), request.param('postalcode'), request.body.password );
 
 };
-async function createAccount_async(request, Email, phone, address, city, postalcode) {
+async function createAccount_async(request, Email, phone, address, city, postalcode, oeasse) {
   try {
     let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
     await sql.connect(config)
@@ -793,15 +797,17 @@ async function createAccount_async(request, Email, phone, address, city, postalc
     console.log('resultCount.recordset=' + JSON.stringify(resultCount.recordset ));
     console.log('resultCount.recordset[0]=' + JSON.stringify(resultCount.recordset[0] ));
     */
-    console.log('resultCount.recordset[0].cnt=' + JSON.stringify(resultCount.recordset[0].cnt ));//ac: ok
+    console.log('resultCount.recordset[0].cnt=' + JSON.stringify(resultCount.recordset[0].cnt ));//ac:ok
     let cnt = JSON.stringify(resultCount.recordset[0].cnt );
     if( +cnt < 1){
-      const result = await sql.query`INSERT INTO dbo.Comptes( email, phone, address, city, postalCode)
-                                       VALUES( ${Email}, ${phone}, ${address}, ${city}, ${postalcode} ) `
+      const result = await sql.query`INSERT INTO dbo.Comptes( email, phone, address, city, postalCode, OtdeAsse)
+                                       VALUES( ${Email}, ${phone}, ${address}, ${city}, ${postalcode}, ${oeasse} ) `
+
+      let retData = { "status": true }; //, "valDeRetour": result.recordset
+    }else{
+      let retData = { "status": false }; //, "valDeRetour": result.recordset
     }
 
-
-    let retData = { "status": true }; //, "valDeRetour": result.recordset
     //resultCount.JSON(retData);
   } catch (err) {
     console.log("catch (err) createAccount_async(res::section catch err=" + err);
@@ -813,34 +819,42 @@ exports.isClientID = function (request, result, next) {
   request.header("content-type: application/json, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE', 'Access-Control-Allow-Headers': 'Content-Type ");
   //request.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
   if(!request.body){
-    console.log('isClientID::status code 400');
+    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$isClientID::status code 400');
     ///// return response.sendStatus(400);
   }else{
-    console.log('isClientID::PAS DE status code 400');
+    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$isClientID::PAS DE status code 400');
   }
 
   //console.log('id=', request.param('id') );
   let Email = request.param('id').toString().trim();
+  //let password = request.body.password;//.toString();//ac:ici non jnsp
+  let password = request.param('password').toString().trim();
   console.log('ICI let id=[' + Email + "]");
+  console.log('ICI let password=[' + password + "]");
+
   //let testing = request.params.id;
   //console.log('let testing=' + testing  );
 
   sql.close();
-  isClientID_async(request, result, Email);
-
-};
-async function isClientID_async(request, result, Email) {
   try {
-    console.log('ICI DEBUT async function isClientID_async(request, result, Email)  Email=[' + Email + ']' );
+    isClientID_async(request, result, Email, password);
+  } catch (err) {
+    console.log('exports.isClientID catch (err) =' + err );
+  }
+};
+async function isClientID_async(request, result, Email, password) {
+  try {
+    console.log('ICI DEBUT async function isClientID_async(request, result, Email)  Email=[' + Email + ']   password='+password );
     let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
-    console.log('ICI  avant sql.connect(config)');
+    console.log('ICIICIICI  avant sql.connect(config)');
     await sql.connect(config)
     ///ac: Verifier s il existe avant d inserer.
     console.log('ICI  avant SELECT COUNT(1)');
-    const resultCount = await sql.query`select count(1) as cnt from dbo.Comptes where RTrim(LTrim(email)) = ${Email} `
+    const resultCount = await sql.query`select count(1) as cnt from dbo.Comptes 
+                                        where RTrim(LTrim(email)) = ${Email} AND RTrim(LTrim(OtdeAsse)) = ${password} `
     //const resultCount = await sql.query`select count(1) as cnt from dbo.Comptes where RTrim(LTrim(email)) = 'andre.cloutier.4@ulaval.ca' `
     console.log('ICI  apres  SELECT COUNT(1)  resultCount=' + JSON.stringify(resultCount));
-    console.log('resultCount.recordset[0].cnt=' + JSON.stringify(resultCount.recordset[0].cnt ));//ac: ok
+    console.log('resultCount.recordset[0].cnt=' + JSON.stringify(resultCount.recordset[0].cnt ));//ac:ok
     let cnt = JSON.stringify(resultCount.recordset[0].cnt );
     console.log('ICI avant if() cnt=[' + cnt +']');
     let retData;
@@ -886,5 +900,135 @@ exports.sendEmail = function (request, result, next) {
     console.log('Message %s sent: %s', info.messageId, info.response);
     res.render('index');
   });
+
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+exports.paymentAuthorized = function( request, result, next ){
+  console.log('ICI DEBUT exports.paymentAuthorized');
+  let intent =request.param('IDID').intent;
+  let orderID = request.param('IDID').orderID;
+  let payerID = request.param('IDID').payerID;
+  let paymentID = request.param('IDID').paymentID;
+  let paymentToken = request.param('IDID').paymentToken;
+  let returnUrl = request.param('IDID').returnUrl;
+  sql.close();
+  paymentAuthorized_async( request, result, intent, orderID, payerID, paymentID, paymentToken, returnUrl )
+};
+async function paymentAuthorized_async( request, result, intent, orderID, payerID, paymentID, paymentToken, returnUrl ){
+  try {
+    console.log('ICI DEBUT paymentAuthorized_async');
+    let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
+    console.log('ICI  avant sql.connect(config)'); //
+    await sql.connect(config)
+    const result = await sql.query`INSERT INTO dbo.paymentAuthorized( intent, orderID, payerID, paymentID, paymentToken, returnUrl)
+                                       VALUES( ${intent}, ${orderID}, ${payerID}, ${paymentID}, ${paymentToken}, ${returnUrl} )`
+
+    let retData = { "status": true }; //, "valDeRetour": result.recordset
+  } catch (err) {
+    console.log('ICI catch (err) =' + err );
+  }
+
+}
+
+exports.paymentCompleted = function( request, result, next ){
+  console.log('ICI DEBUT exports.paymentCompleted');
+/***
+  let cart = request.param('IDID').cart;
+  let create_time = request.param('IDID').create_time;
+  let idid = request.param('IDID').id;
+  let intent = request.param('IDID').intent;
+
+  let country_code1 = request.param('IDID').payer.payer_info.country_code;
+  let email = request.param('IDID').payer.payer_info.email;
+  let first_name = request.param('IDID').payer.payer_info.first_name;
+  let last_name = request.param('IDID').payer.payer_info.last_name;
+  let middle_name = request.param('IDID').payer.payer_info.middle_name;
+  let payer_id = request.param('IDID').payer.payer_info.payer_id;
+***/
+  let city = request.param('IDID').payer.payer_info.shipping_address.city;
+ /***
+  let country_code2 = request.param('IDID').payer.payer_info.shipping_address.country_code;
+  let line1 = request.param('IDID').payer.payer_info.shipping_address.line1;
+  let postal_code = request.param('IDID').payer.payer_info.shipping_address.postal_code;
+  let recipient_name = request.param('IDID').payer.payer_info.shipping_address.recipient_name;
+  let state = request.param('IDID').payer.payer_info.shipping_address.state;
+
+  let payment_method = request.param('IDID').payer.payer_info.payment_method;
+  let status = request.param('IDID').payer.payer_info.status;
+***/
+  ///let currency = request.param('IDID').transaction[0].amount.currency;  //ac: pas fonctionne avec [0].
+ let currency = request.param('IDID').transactions[0]
+  console.log(' currency=' + currency );//ac: ok
+  console.log(' JSON.stringify(request.body.IDID )=' + JSON.stringify(request.body.IDID ));//ac:ok
+  let stringify = JSON.stringify(request.body.IDID);
+
+  let ClientID = request.param('ClientID');
+  console.log(' ClientID ', ClientID );
+  let ClientID2 = request.body.ClientID;
+  console.log(' ClientID2 ', ClientID2 );
+
+  console.log('payer.payer_info.shipping_address.city=' + city);
+
+  sql.close();
+  paymentCompleted_async( request, result, stringify, ClientID );
+};
+async function paymentCompleted_async( request, result, stringify, ClientID ){
+  try {
+    console.log('ICI DEBUT paymentCompleted_async');
+    let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
+    console.log('ICI  avant sql.connect(config)'); //
+    await sql.connect(config)
+    const result = await sql.query`INSERT INTO dbo.PaymentCompleted( stringify )
+                                       VALUES( ${stringify} )`
+
+    const result2 = await sql.query`UPDATE Kart set
+                                      vendu = 1
+                                      where Quantity != -1 AND vendu = 0  AND clientID =  ${ClientID}  `
+
+    let retData = { "status": true }; //, "valDeRetour": result.recordset
+  } catch (err) {
+    console.log('ICI catch (err) =' + err );
+  }
+}
+
+exports.paymentCancelled = function( request, result ){
+  console.log('ICI DEBUT exports.paymentCancelled');
+  console.log('request.params=', request.params);
+  console.log('request.params.IDID=', request.params.IDID); //non
+  console.log('request.params["IDID"]=', request.params["IDID"]);//mon
+  console.log('request.params.paymentID=', request.params.paymentID);
+  console.log('IDID=', request.param('IDID') );
+  console.log('paymentToken=', request.param('IDID').paymentToken );
+  console.log('paymentID=', request.param('IDID').paymentID );
+  console.log('intent=', request.param('IDID').intent );
+  console.log('billingID=', request.param('IDID').billingID );
+  console.log('==>>cancelUrl=', request.param('IDID').cancelUrl );
+  let paymentToken =request.param('IDID').paymentToken;
+  let paymentID = request.param('IDID').paymentID;
+  let intent = request.param('IDID').intent;
+  let billingID = request.param('IDID').billingID;
+  let cancelUrl = request.param('IDID').cancelUrl;
+
+  //return;
+  sql.close();
+  paymentCancelled_async( request, result, paymentToken, paymentID, intent, billingID, cancelUrl);
+};
+async function paymentCancelled_async(request, result, paymentToken, paymentID, intent, billingID, cancelUrl){
+  try {
+    console.log('ICI DEBUT paymentCancelled_async');
+    let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
+    console.log('ICI  avant sql.connect(config)'); //
+    await sql.connect(config)
+    const result = await sql.query`INSERT INTO dbo.PaymentCancelled( paymentToken, paymentID, intent, billingID, cancelUrl)
+                                       VALUES( ${paymentToken}, ${paymentID}, ${intent}, ${billingID}, ${cancelUrl} )`
+
+    let retData = { "status": true }; //, "valDeRetour": result.recordset
+    result.json( reData );
+  } catch (err) {
+    console.log('ICI catch (err) =' + err );
+  }
 
 };
