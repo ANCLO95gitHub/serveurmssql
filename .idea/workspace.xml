@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab184724-6a05-43a0-b6b8-fea2d6743f40" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/README.zip" beforeDir="false" afterPath="$PROJECT_DIR$/README.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/Inventaire.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Inventaire.js" afterDir="false" />
     </list>
@@ -16,14 +15,14 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="vertical" split-proportion="0.5066829">
+    <splitter split-orientation="vertical" split-proportion="0.62089914">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="375">
-                  <caret line="82" selection-start-line="82" selection-end-line="82" />
+                <state relative-caret-position="103">
+                  <caret line="66" column="52" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="52" />
                 </state>
               </provider>
             </entry>
@@ -31,8 +30,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="112">
-                  <caret line="434" column="39" lean-forward="true" selection-start-line="434" selection-start-column="39" selection-end-line="434" selection-end-column="39" />
+                <state relative-caret-position="-300">
+                  <caret line="526" column="22" selection-start-line="526" selection-start-column="22" selection-end-line="526" selection-end-column="22" />
                 </state>
               </provider>
             </entry>
@@ -62,8 +61,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="8547">
-                  <caret line="962" column="34" lean-forward="true" selection-start-line="962" selection-start-column="34" selection-end-line="962" selection-end-column="34" />
+                <state relative-caret-position="10230">
+                  <caret line="1055" column="34" lean-forward="true" selection-start-line="1055" selection-start-column="34" selection-end-line="1055" selection-end-column="34" />
                 </state>
               </provider>
             </entry>
@@ -74,9 +73,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>process</find>
-      <find>session</find>
-      <find>inventaire</find>
       <find>allow</find>
       <find>getKart</find>
       <find>query</find>
@@ -98,12 +94,15 @@
       <find>params</find>
       <find>insert</find>
       <find>paymentAuthorized</find>
-      <find>paypal</find>
       <find>ac:</find>
       <find>paymentCompleted</find>
       <find>ac:ok</find>
       <find>ac: ok</find>
       <find>getkart</find>
+      <find>DEBUT  exports.getKart</find>
+      <find>DEBUT async function Kart</find>
+      <find>banane</find>
+      <find>paypal</find>
     </findStrings>
     <dirStrings>
       <dir>C:\nodejs\sample\serveurmssql</dir>
@@ -128,9 +127,9 @@
     <other-services-enabled>true</other-services-enabled>
     <auto-save>true</auto-save>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="886" />
-    <option name="y" value="181" />
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="470" />
+    <option name="y" value="185" />
     <option name="width" value="1426" />
     <option name="height" value="1220" />
   </component>
@@ -214,12 +213,12 @@
       <workItem from="1561464985381" duration="32806000" />
       <workItem from="1561666960162" duration="1334000" />
       <workItem from="1563191603954" duration="48029000" />
-      <workItem from="1565007283228" duration="115080000" />
+      <workItem from="1565007283228" duration="123356000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="308023000" />
+    <option name="totallyTimeSpent" value="316299000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -231,7 +230,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="886" y="181" width="1426" height="1220" extended-state="0" />
+    <frame x="470" y="185" width="1426" height="1220" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10878962" />
@@ -305,15 +304,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="82" selection-start-line="82" selection-end-line="82" />
+        <state relative-caret-position="103">
+          <caret line="66" column="52" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="52" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8547">
-          <caret line="962" column="34" lean-forward="true" selection-start-line="962" selection-start-column="34" selection-end-line="962" selection-end-column="34" />
+        <state relative-caret-position="-300">
+          <caret line="526" column="22" selection-start-line="526" selection-start-column="22" selection-end-line="526" selection-end-column="22" />
         </state>
       </provider>
     </entry>

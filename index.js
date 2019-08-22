@@ -62,6 +62,11 @@ app.get('/getinventaire/:id&:laSession', inventaire.getInventaire);
 app.post('/postkart',  inventaire.postKart); //urlencodedParser,
 app.get('/getkart', inventaire.getKart);
 app.get('/getkart/:id', inventaire.getKart);
+app.get('/getkart_annuler', inventaire.getkart_annuler);
+app.get('/getkart_annuler/:id', inventaire.getkart_annuler);
+app.get('/getkart_vendus', inventaire.getkart_vendus);
+app.get('/getkart_vendus/:id', inventaire.getkart_vendus);
+
 app.get('/isClientID', inventaire.isClientID);
 app.get('/isClientID/:id', inventaire.isClientID);
 

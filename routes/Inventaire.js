@@ -425,12 +425,12 @@ async function updateSelecteurInventaire_async(  IDID, laLongueur, Quantity, res
     console.log(err)
   }
 };
-/// ac:ici
+
 exports.getKart = function (req, res) {
   //req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
   req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE', 'Access-Control-Allow-Headers': 'Content-Type ");
   ///console.log('DEBUT  exports.getInventaire = function (req, res) {   req.params.id=' + req.query.id);
-  console.log('DEBUT  exports.getKart = function (req, res)' );
+  console.log('DEBUT  PAS ICI  exports.getKart = function (req, res)' );
   res.header("content-type: application/json");
   console.log('id=', req.param('id') );
   let id = req.param('id').toString().trim();
@@ -481,6 +481,99 @@ async function getKart_async(res, id)  {
     console.log(err)
   }
 };
+/// ac:ici
+/// ac:ici  getKart
+exports.getkart_annuler = function (req, res) {
+  //req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
+  req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE', 'Access-Control-Allow-Headers': 'Content-Type ");
+  ///console.log('DEBUT  exports.getInventaire = function (req, res) {   req.params.id=' + req.query.id);
+  console.log('DEBUT  exports.getkart_Annuler = function (req, res)' );
+  res.header("content-type: application/json");
+  console.log('id=', req.param('id') );
+  let id = req.param('id').toString().trim();
+  console.log('let id=' + id  );
+  let testing = req.params.id;
+  console.log('let testing=' + testing  );
+
+  if( 1 == 1){
+    sql.close();
+    getkart_annuler_async(res, id);
+  }
+  console.log('getInventaire_async(res, MB, Forme); complete');
+}
+async function getkart_annuler_async(res, id)  {
+  try {
+    // AC: TODO faire une restriction par client
+    console.log('DEBUT async getkart_annuler_async Kart() ', id);
+    let retData='';
+    // make sure that any items are correctly URL encoded in the connection string
+    //let theConnect = 'mssql://andrec:Bonjour1@srv-lrobo-sql-cloud.database.windows.net/LR_INV_CLOUD;encrypt=true'
+    let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
+    await sql.connect(config)
+    const result2 = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity = -1 ORDER BY Kart.ID  `
+    retData = { status: true, KartMetaux: result2.recordset  };
+
+    //console.log(result)
+    //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
+
+    res.json(retData);
+    sql.close();
+  } catch (err) {
+    console.log("getKart_async(res::section catch")
+    console.log(err)
+  }
+};
+/// ac:ici  getKart
+exports.getkart_vendus = function (req, res) {
+  //req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*' ");
+  req.header("content-type: application/json, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE', 'Access-Control-Allow-Headers': 'Content-Type ");
+  ///console.log('DEBUT  exports.getInventaire = function (req, res) {   req.params.id=' + req.query.id);
+  console.log('DEBUT  exports.getKart_Vendus = function (req, res)' );
+  res.header("content-type: application/json");
+  console.log('id=', req.param('id') );
+  let id = req.param('id').toString().trim();
+  console.log('let id=' + id  );
+  let testing = req.params.id;
+  console.log('let testing=' + testing  );
+  //if( !( id >=0 )){
+  //  id=3100;  // ac: reviser
+  //}
+  //let MB = id.toString().substr(0, 2);
+  //let Forme = id.toString().substr( 2);
+  //console.log('MB = ' + MB);
+  //console.log('Forme = ' + Forme );
+  //let lareponse = { tata: 'tete'};
+  //res.json(lareponse);
+  if( 1 == 1){
+    sql.close();
+    getKart_Vendus_async(res, id);
+  }
+  console.log('getInventaire_async(res, MB, Forme); complete');
+}
+async function getKart_Vendus_async(res, id)  {
+  try {
+    // AC: TODO faire une restriction par client
+    console.log('DEBUT async function Kart() ', id);
+    let retData='';
+    // make sure that any items are correctly URL encoded in the connection string
+    //let theConnect = 'mssql://andrec:Bonjour1@srv-lrobo-sql-cloud.database.windows.net/LR_INV_CLOUD;encrypt=true'
+    let theConnect = 'mssql://andrec:Bonjour1@tcp:srv-lrobo-sql-cloud;databaseName=LR_INV_CLOUD;encrypt=true;integratedSecurity=true;trustServerCertificate=false'
+    await sql.connect(config)
+    const result2 = await sql.query`select DISTINCT Kart.ID, clientID, courriel, IDID, Kart.InPurcId_ExPurcId, SelecteurInventaire.NomMB, SelecteurInventaire.NomForme, Longueur, Quantity, prix, vendu, DateTime from Kart left outer join SelecteurInventaire on kart.IDID = SelecteurInventaire.ID where  Karted = 1 AND Quantity != -1  AND vendu = 1 ORDER BY Kart.ID  `
+    retData = { status: true, KartMetaux: result2.recordset  };
+
+    //console.log(result)
+    //// let retData = { status: true, PoidsMetaux: {recordset : JSON.parse(JSON.stringify(result)).recordset } };
+
+    res.json(retData);
+    sql.close();
+  } catch (err) {
+    console.log("getKart_async(res::section catch")
+    console.log(err)
+  }
+};
+
+
 
 exports.deleteKart = function( request, response){
   console.log('req.body.ExPurcId=' + request.body.IDID );  //ac: semble OK
