@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab184724-6a05-43a0-b6b8-fea2d6743f40" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/Inventaire.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Inventaire.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.zip" beforeDir="false" afterPath="$PROJECT_DIR$/README.zip" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -21,8 +20,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="103">
-                  <caret line="66" column="52" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="52" />
+                <state relative-caret-position="143">
+                  <caret line="78" column="36" selection-start-line="78" selection-start-column="30" selection-end-line="78" selection-end-column="36" />
                 </state>
               </provider>
             </entry>
@@ -30,8 +29,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-300">
-                  <caret line="526" column="22" selection-start-line="526" selection-start-column="22" selection-end-line="526" selection-end-column="22" />
+                <state relative-caret-position="313">
+                  <caret line="621" column="7" selection-start-line="621" selection-start-column="7" selection-end-line="621" selection-end-column="7" />
                 </state>
               </provider>
             </entry>
@@ -61,8 +60,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="10230">
-                  <caret line="1055" column="34" lean-forward="true" selection-start-line="1055" selection-start-column="34" selection-end-line="1055" selection-end-column="34" />
+                <state relative-caret-position="9669">
+                  <caret line="1055" column="34" selection-start-line="1055" selection-start-column="34" selection-end-line="1055" selection-end-column="34" />
                 </state>
               </provider>
             </entry>
@@ -73,7 +72,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>allow</find>
       <find>getKart</find>
       <find>query</find>
       <find>request</find>
@@ -101,8 +99,9 @@
       <find>getkart</find>
       <find>DEBUT  exports.getKart</find>
       <find>DEBUT async function Kart</find>
-      <find>banane</find>
       <find>paypal</find>
+      <find>banane</find>
+      <find>Logout</find>
     </findStrings>
     <dirStrings>
       <dir>C:\nodejs\sample\serveurmssql</dir>
@@ -127,9 +126,9 @@
     <other-services-enabled>true</other-services-enabled>
     <auto-save>true</auto-save>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="470" />
-    <option name="y" value="185" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="759" />
+    <option name="y" value="139" />
     <option name="width" value="1426" />
     <option name="height" value="1220" />
   </component>
@@ -166,7 +165,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../real-world-vue" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -213,12 +212,12 @@
       <workItem from="1561464985381" duration="32806000" />
       <workItem from="1561666960162" duration="1334000" />
       <workItem from="1563191603954" duration="48029000" />
-      <workItem from="1565007283228" duration="123356000" />
+      <workItem from="1565007283228" duration="139343000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="316299000" />
+    <option name="totallyTimeSpent" value="332286000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -230,7 +229,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="470" y="185" width="1426" height="1220" extended-state="1" />
+    <frame x="759" y="139" width="1426" height="1220" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10878962" />
@@ -243,11 +242,11 @@
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32947367" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32934684" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50072044" side_tool="true" visible="true" weight="0.24287029" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49927953" visible="true" weight="0.24287029" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32934684" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50072044" side_tool="true" weight="0.24287029" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49927953" visible="true" weight="0.3449862" />
       <window_info anchor="bottom" id="TypeScript" order="11" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -304,15 +303,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="66" column="52" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="52" />
+        <state relative-caret-position="143">
+          <caret line="78" column="36" selection-start-line="78" selection-start-column="30" selection-end-line="78" selection-end-column="36" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/Inventaire.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-300">
-          <caret line="526" column="22" selection-start-line="526" selection-start-column="22" selection-end-line="526" selection-end-column="22" />
+        <state relative-caret-position="313">
+          <caret line="621" column="7" selection-start-line="621" selection-start-column="7" selection-end-line="621" selection-end-column="7" />
         </state>
       </provider>
     </entry>
